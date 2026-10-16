@@ -1,0 +1,17 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TikTok callback</title><link rel="icon" href="icon.png"><style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2em auto;padding:0 1em}code{background:#f2f2f2;padding:2px 4px;word-break:break-all}.ok{color:#0a7a0a}.bad{color:#b00}</style></head><body>
+<h1>TikTok authorization result</h1>
+<div id="out"></div>
+<p><small>This page only displays the result. The code is exchanged for a token on our private server; no client secret is in this site.</small></p>
+<script>
+const q = new URLSearchParams(location.search);
+const code = q.get("code"), state = q.get("state"), err = q.get("error");
+const saved = sessionStorage.getItem("tt_state");
+const out = document.getElementById("out");
+function line(k,v,c){const p=document.createElement("p");p.innerHTML="<b>"+k+":</b> ";const s=document.createElement(c?"span":"code");if(c)s.className=c;s.textContent=v;p.appendChild(s);out.appendChild(p);}
+if (err) line("Error", err + " " + (q.get("error_description")||""), "bad");
+line("code", code || "(none)");
+line("state", state || "(none)");
+if (state && saved && state === saved) { line("State check", "verified ✓", "ok"); sessionStorage.removeItem("tt_state"); }
+else line("State check", "FAILED – state missing or does not match this browser session", "bad");
+history.replaceState(null, "", location.pathname);
+</script></body></html>

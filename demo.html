@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo – Connect TikTok</title><link rel="icon" href="icon.png"><style>body{font-family:system-ui,sans-serif;max-width:760px;margin:2em auto;padding:0 1em}button{font-size:1.2em;padding:.6em 1.4em;background:#111;color:#fff;border:0;border-radius:8px;cursor:pointer}code{background:#f2f2f2;padding:2px 4px;word-break:break-all}</style></head><body>
+<nav><a href="index.html">Home</a> <a href="privacy.html">Privacy</a> <a href="terms.html">Terms</a></nav>
+<h1>Connect TikTok</h1>
+<p>Step 1: the account owner connects @endureinfaithaha. Step 2: our server exchanges the code and uploads a finished video to that account.</p>
+<button id="go">Connect TikTok</button>
+<p><small>Authorize URL: <code id="u"></code></small></p>
+<script>
+// Public client key only. The client secret is never in this site.
+const CLIENT_KEY = "REPLACE_WITH_CLIENT_KEY";
+const SCOPES = "user.info.basic,video.publish,video.upload";
+const REDIRECT_URI = new URL("callback.html", location.href).href;
+function rand(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,"0")).join("");}
+function build(){
+  const state = rand(16);
+  sessionStorage.setItem("tt_state", state);
+  // TikTok web Login Kit uses state for CSRF; PKCE is only required for desktop/mobile apps.
+  const p = new URLSearchParams({client_key:CLIENT_KEY, scope:SCOPES, response_type:"code", redirect_uri:REDIRECT_URI, state});
+  return "https://www.tiktok.com/v2/auth/authorize/?" + p.toString();
+}
+document.getElementById("u").textContent = "https://www.tiktok.com/v2/auth/authorize/?client_key="+CLIENT_KEY+"&scope="+SCOPES+"&response_type=code&redirect_uri="+encodeURIComponent(REDIRECT_URI)+"&state=…";
+document.getElementById("go").onclick = () => { location.href = build(); };
+</script></body></html>
